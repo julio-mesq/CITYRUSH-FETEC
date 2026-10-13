@@ -1,0 +1,21 @@
+CITY RUSH v45 — otimização da versão 44
+
+Base conferida byte a byte com City-Rush-v44-GLBs-Novos.zip.
+42 GLBs comprovadamente sem uso removidos: 6,35 MiB (6655632 bytes).
+Casas, veículos usados, personagens, armas, oficina, missões e saves preservados.
+
+Melhorias:
+- Cada URL de GLB é baixada e decodificada uma vez, mesmo com várias entradas no catálogo.
+- Transformações de cenários e casas estáticas não são recalculadas a cada quadro.
+- Peças de carros fora da câmera usam o descarte por visibilidade do Three.js.
+- Montagem do cenário é distribuída entre quadros; compilação de shaders em segundo plano quando disponível.
+- Última pose de caminhada/corrida se conecta à primeira, eliminando o salto na repetição.
+- Clipes de locomoção tratados são reutilizados; os arquivos originais do personagem são preservados.
+- Conexões de áudio de passos e tiros são liberadas ao terminar.
+- Lista temporária de efeitos dos veículos é reutilizada.
+
+Remoções detalhadas: OTIMIZACAO-v45.json.
+Validação: integridade do ZIP base, modelos e suas dependências, movimento em 30/60/120fps simulados, continuidade do clipe GLB real, casas, armas, veículos e offline.
+Não foi possível medir o FPS real no navegador nesta sessão. Nenhum jogo pode ter ausência de travamentos garantida em todos os aparelhos.
+
+Para atualizar GitHub Pages: substitua os arquivos pelo conteúdo de dist, faça Commit e Push origin.

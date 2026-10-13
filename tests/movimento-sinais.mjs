@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const ler=n=>fs.readFileSync(new URL('../dist/'+n,import.meta.url),'utf8');
+const player=ler('src/player.js'),main=ler('main.js'),traffic=ler('src/traffic.js'),decor=ler('src/decor.js');
+const body=player.slice(player.indexOf('export function locomocaoLocal'),player.indexOf('function restaurarAgachamento')).replace('export function','function');
+const preparar=new Function('LOCOMOCAO_CACHE',body+';return locomocaoLocal;')(new WeakMap());
+const original={tracks:[{name:'Body.position',times:[0,.5,1],getValueSize(){return 3;},values:[0,1,0,3,1.1,5,6,.9,10]}],clone(){return {tracks:this.tracks.map(t=>({...t,values:[...t.values]}))};}};
+const local=preparar(original);assert.deepEqual(local.tracks[0].values,[0,1,0,0,1.1,0,0,1,0]);assert.equal(original.tracks[0].values[3],3,'o clipe original não deve ser alterado');
+assert.doesNotMatch(player,/this\.agachado\?\.7:1/,'agachar não deve achatar o personagem');
+assert.match(player,/\['LowerLeg.L',1\.65\]/);assert.match(player,/antes-depois/,'pés devem permanecer na altura do chão');
+assert.match(main,/jog\.atualizar\(sub,false\)/,'mixer deve atualizar só uma vez por quadro');
+assert.match(traffic,/N=49/);assert.match(traffic,/lado of \[-1,1\]/,'lentes devem aparecer nas duas faces');
+assert.match(decor,/pontoOnibus'.*?-Math.PI \/ 2/);
+assert.doesNotMatch(decor,/\['luzTransito'/,'semáforos decorativos apagados não devem ser duplicados');
+console.log('movimento-sinais: raiz sem saltos, agachamento articulado, semáforos e ponto de ônibus OK');

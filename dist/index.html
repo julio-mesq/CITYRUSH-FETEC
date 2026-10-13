@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<base href="./">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#08131f">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111'/%3E%3Cpath d='M9 38h46v9H9zm18-29h10v46H27z' fill='%23fc0'/%3E%3C/svg%3E">
+<title>City Rush</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="style.css?v=32">
+<link rel="manifest" href="manifest.webmanifest">
+<script>
+// three.js: usa a cópia local (vendor/three, criada por "Preparar offline") se existir; senão a CDN.
+// A CDN fica guardada pelo service worker na primeira visita, então também funciona offline depois disso.
+(function () {
+  var CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/', LOCAL = 'vendor/three/', base = CDN, origem = 'cdn';
+  try {
+    var x = new XMLHttpRequest(); x.open('GET', LOCAL + 'build/three.module.js', false); x.send();
+    if (x.status === 200 && /javascript/i.test(x.getResponseHeader('content-type') || '')) { base = LOCAL; origem = 'local'; }
+  } catch (e) {}
+  var abs = function (u) { return new URL(u, document.baseURI).href; };
+  var s = document.createElement('script'); s.type = 'importmap';
+  s.textContent = JSON.stringify({ imports: { three: abs(base + 'build/three.module.js'), 'three/addons/': abs(base + 'examples/jsm/') } });
+  document.head.appendChild(s); window.__threeOrigem = origem;
+})();
+</script>
+</head>
+<body>
+<div id="carga">
+  <div class="cargaFotos" aria-hidden="true">
+    <figure class="cargaFoto foto1"><figcaption>VIDA NA CIDADE</figcaption></figure>
+    <figure class="cargaFoto foto2"><figcaption>CONSTRUA SUA HISTÓRIA</figcaption></figure>
+    <figure class="cargaFoto foto3"><figcaption>A CIDADE É SUA</figcaption></figure>
+  </div>
+  <div class="cargaVinheta"></div>
+  <div class="cargaMarca"><small>NOVA GERAÇÃO</small><h1 class="logo-heading"><img class="cityRushLogo" src="assets/branding/city-rush-logo.png" alt="CITY RUSH" width="1536" height="1024" fetchpriority="high"></h1><div class="tagline">MUNDO ABERTO · SUA VIDA · SUAS REGRAS</div><div class="barra"><i id="cb"></i></div><p id="ct">Preparando a cidade…</p></div>
+</div>
+<div id="criar" class="off"></div>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div id="colEsq"><div id="bars"><div id="uname"></div><div class="bar hp" title="Vida"><i id="hp"></i></div><div class="bar armor" title="Colete"><i id="armor"></i></div><div class="bar st" title="Stamina"><i id="st"></i></div><div id="money">$0</div></div>
+  <div id="missao"></div></div>
+  <div id="stars"></div><div id="netHud">SOZINHO</div><div id="alvo"></div><canvas id="mini" width="160" height="160"></canvas><div id="dica"></div><div id="nt"></div><div id="hud2"></div>
+  <div id="painelDir"><div id="weaponCurrent"><b id="weaponIcon">▰</b><span id="weaponName">PISTOLA</span><small id="weaponAmmo">12 / 48</small></div><div id="info"></div><div id="vehicleHud"><div id="dashName">VEÍCULO</div><div id="speedRing"><strong id="dashSpeed">0</strong><span>km/h</span></div><div class="dashMeta"><b id="dashGear">N</b><span id="dashRpm">800 rpm</span><span id="dashHp">100%</span></div></div></div>
+</div>
+<div id="scopeOverlay" aria-hidden="true"></div>
+<div id="ironSight" aria-hidden="true"><i></i></div>
+<section id="weaponWheel" aria-label="Roda de armas"><div id="weaponSlots"></div><div class="wheelCenter"><b id="wheelWeaponName">PISTOLA</b><strong id="wheelWeaponAmmo">12 / 48</strong><small>Q PARA FECHAR</small></div></section>
+<canvas id="mapa" width="700" height="700"></canvas>
+<div id="inv"></div><div id="escolha"></div><div id="tel"></div><div id="oficinaPanel"></div><div id="casaPanel"></div><div id="pausePanel"></div><div id="wasted">VOCÊ MORREU</div>
+<section id="chatPanel" aria-label="Chat da sala"><header><b>CHAT DA SALA</b><button id="chatClose" aria-label="Fechar chat">×</button></header><div id="chatLog" aria-live="polite"></div><form id="chatForm"><input id="chatInput" maxlength="140" autocomplete="off" placeholder="Digite uma mensagem…" aria-label="Mensagem"><button>ENVIAR</button></form></section>
+<div id="mobileControls">
+  <div id="touchLook" aria-label="Arraste para mover a câmera"></div>
+  <div id="mobileTop">
+    <button data-tap="KeyT">CELULAR</button><button data-tap="KeyM">MAPA</button><button data-tap="KeyB">CASA</button><button id="mChat">CHAT</button>
+    <button data-tap="KeyV">CÂMERA</button><button data-tap="KeyQ">ARMA</button><button data-tap="Escape">PAUSA</button><button id="mFull">TELA</button>
+  </div>
+  <div id="joystick"><i id="stick"></i></div>
+  <div id="mobileActions">
+    <button id="mRun" data-hold="ShiftLeft">CORRER</button>
+    <button id="mJump" data-hold="Space">PULAR</button>
+    <button id="mEnter" data-tap="KeyE">ENTRAR</button>
+    <button data-tap="KeyG">FALAR</button>
+    <button data-tap="KeyR">RECARGA</button>
+    <button data-hold="KeyC">AGACHAR</button><button data-tap="ControlLeft">ESQUIVA</button>
+    <button data-hold="Mouse2">MIRAR</button><button id="mAttack" data-hold="Mouse0">ATIRAR</button>
+  </div>
+</div>
+<div id="rotateNotice">Para jogar melhor, vire o celular de lado ↻</div>
+<div id="menu"><div class="edition">DEMO PÚBLICA</div><h1 class="logo-heading"><img class="cityRushLogo" src="assets/branding/city-rush-logo.png" alt="CITY RUSH" width="1536" height="1024"></h1><p>Comece em casa, aceite a campanha no celular e conquiste a cidade.</p><button id="startDemo">JOGAR DEMO PÚBLICA</button><div id="offlineChip" aria-live="polite"></div>
+<div id="volbox" onclick="event.stopPropagation()">Volume <input id="vol" type="range" min="0" max="100" value="60"></div>
+<small id="controles">WASD mover · Shift correr · C agachar · Ctrl esquiva · Espaço pular/parkour ou freio de mão<br>Mouse esq. atira/soca, dir. mira · R recarregar · Q roda de armas · 1-7 troca rápida<br>E entrar/sair · B construir na casa · H buzina · ← → rádio · G conversar/reanimar · Enter chat · V câmera · Tab inventário · M mapa · T celular</small>
+<div id="onlineBox" onclick="event.stopPropagation()"><div><b>MODO ONLINE</b><span id="onlineMsg">PRONTO</span></div><div class="onlineRow"><input id="roomCode" value="cidade-1" maxlength="24" aria-label="Código da sala"><select id="roomMode" aria-label="Modo da sala"><option value="coop">COOPERATIVO</option><option value="deathmatch">DEATHMATCH</option></select><button id="onlinePlay">ENTRAR NA SALA</button><button id="shareRoom">COPIAR LINK</button><button id="soloPlay">JOGAR SOZINHO</button></div><small>O link guarda o código e o modo da sala. Cooperativo desliga o fogo amigo e permite reanimar; Deathmatch ativa dano e placar.</small></div>
+<div onclick="event.stopPropagation()"><button id="linkCelular">LINK PARA CELULAR</button><div id="linkBox"><p id="linkTexto"></p><input id="linkUrl" readonly aria-label="Link do jogo"><div class="linhaLink"><button id="linkCopiar">COPIAR</button><button id="linkCompartilhar">COMPARTILHAR</button><button id="linkFechar">FECHAR</button></div></div><button id="pendrive">BAIXAR ATALHO PARA PENDRIVE</button><small id="pendriveHint" style="display:block;max-width:550px;margin:8px auto">Atalho para Windows. Baixar o atalho requer internet; depois o modo solo funciona offline. O progresso fica no navegador.</small></div>
+<button id="novo" onclick="event.stopPropagation()">Novo jogo (apaga o progresso salvo)</button></div>
+<script type="module" src="main.js?v=32"></script>
+</body>
+</html>

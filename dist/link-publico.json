@@ -1,0 +1,4 @@
+{
+  "_leia": "Cole em \"url\" o endereço público (https) onde a pasta dist foi publicada. Ex.: https://meu-jogo.netlify.app/ — assim o botão LINK PARA CELULAR, o link da sala e a página /celular passam a usar esse endereço, que funciona no celular sem o computador ligado. Veja PUBLICAR.txt.",
+  "url": ""
+}

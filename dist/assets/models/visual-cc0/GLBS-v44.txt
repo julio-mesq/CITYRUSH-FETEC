@@ -1,0 +1,19 @@
+CITY RUSH v44 — modelos novos gratuitos (CC0)
+
+Kenney Mini Market https://kenney.nl/assets/mini-market
+Prateleiras, pães, frutas, freezer, caixa registradora, carrinho, cesta e atendente animado.
+Kenney Mini Characters https://kenney.nl/assets/mini-characters
+Três cidadãos animados e um policial de uniforme.
+Kenney Factory Kit https://kenney.nl/assets/factory-kit
+Caixas, recipientes, engrenagens, pistão e scanner da oficina.
+Kenney City Kit Commercial https://kenney.nl/assets/city-kit-commercial
+Toldo, marquise e guarda-sol.
+Grab3D Cozy Tools & Workshop https://grab3d.com/kits/cozy-tools-workshop/
+Bancada, painel de ferramentas, maleta, chave, carrinho de carga e paleteira.
+WRAD ARMS — wriks https://wriks.itch.io/wrad-arms
+Braços e mãos com esqueleto. Encaixe e recarga são controlados pelo jogo, não clipes do pack.
+Spectral GT-RS — JaronKBragg7337 https://github.com/JaronKBragg7337/spectral-gt-rs
+Esportivo com interior, portas e rodas. Adaptação City Rush: removidos textos e microdetalhes, agrupadas malhas por material, movimento controlado pelo jogo. 151.722 → 75.454 triângulos; 258 → 57 primitivas. Não entra no trânsito automático.
+
+As licenças originais acompanham cada pasta. Os modelos não exigem compras ou cadastro dos jogadores.
+Os objetos de trabalho são detalhes visuais integrados às lojas e oficina; não criam profissões novas.

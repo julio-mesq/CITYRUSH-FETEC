@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {direcao,pontoSalto,passoDrift,smooth} from '../dist/src/mechanics.js';
+assert.deepEqual(direcao(1,0,0),{x:0,z:-1});
+const d=direcao(1,1,0);assert.ok(Math.abs(Math.hypot(d.x,d.z)-1)<1e-9);
+const inicio={x:9,z:25},fim={x:9,z:21};
+assert.deepEqual(pontoSalto(inicio,fim,0,1.5),{x:9,z:25,y:0});
+assert.ok(Math.abs(pontoSalto(inicio,fim,.5,1.5).y-1.5)<1e-9);
+assert.ok(Math.abs(pontoSalto(inicio,fim,1,1.5).z-21)<1e-9);
+let slide=0;for(let i=0;i<60;i++)slide=passoDrift(slide,25,1,true,1,1/60);assert.ok(slide>9);
+for(let i=0;i<120;i++)slide=passoDrift(slide,25,0,false,1,1/60);assert.ok(slide<.001);
+let a=0,b=0;for(let i=0;i<30;i++)a=smooth(a,10,5,1/30);for(let i=0;i<144;i++)b=smooth(b,10,5,1/144);assert.ok(Math.abs(a-b)<1e-9);
+console.log('Movimento: direção, diagonal, parkour, drift e independência de FPS OK');

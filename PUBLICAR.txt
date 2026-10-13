@@ -1,0 +1,52 @@
+COMO TER UM LINK PARA JOGAR NO CELULAR SEM O COMPUTADOR (City Rush)
+
+O QR code da página /celular só funciona com o computador ligado e no mesmo Wi-Fi.
+Para jogar em qualquer lugar, o jogo precisa estar PUBLICADO na internet. A pasta "dist" é o site inteiro
+(não precisa instalar nada no servidor): basta colocar essa pasta em uma hospedagem estática.
+
+----------------------------------------------------------------------
+OPÇÃO 1 — A hospedagem que você já usa (o projeto já aponta para ela)
+----------------------------------------------------------------------
+O arquivo .openai/hosting.json já aponta para a pasta dist. Publique esta versão na mesma hospedagem:
+o link público que você já tem passa a abrir a versão nova. Não precisa criar nada.
+
+----------------------------------------------------------------------
+OPÇÃO 2 — Netlify Drop (mais simples, grátis, sem cadastro obrigatório)
+----------------------------------------------------------------------
+ 1. Abra https://app.netlify.com/drop
+ 2. Arraste a PASTA "dist" para a página.
+ 3. Em alguns segundos aparece o link (ex.: https://nome-aleatorio.netlify.app). Esse é o link do jogo.
+
+----------------------------------------------------------------------
+OPÇÃO 3 — Cloudflare Pages (grátis)
+----------------------------------------------------------------------
+ 1. https://dash.cloudflare.com → Workers & Pages → Create → Pages → Upload assets.
+ 2. Envie a pasta "dist". O link termina em .pages.dev.
+
+----------------------------------------------------------------------
+OPÇÃO 4 — GitHub Pages (grátis, atualiza sozinho a cada envio)
+----------------------------------------------------------------------
+ 1. Crie um repositório no GitHub e envie esta pasta inteira (já inclui .github/workflows/pages.yml).
+ 2. No repositório: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+ 3. O link fica em https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/
+
+----------------------------------------------------------------------
+DEPOIS DE PUBLICAR (1 minuto)
+----------------------------------------------------------------------
+ 1. Abra dist/link-publico.json e cole o endereço (https) no campo "url". Exemplo:
+        { "url": "https://meu-city-rush.netlify.app/" }
+    (Se o jogo já está sendo aberto direto pelo link público, este passo é opcional.)
+ 2. Publique de novo (ou só refaça o upload) para o arquivo ir junto.
+ 3. Pronto:
+      • O botão "LINK PARA CELULAR" do menu mostra/compartilha esse endereço.
+      • O link da sala do multiplayer passa a usar esse endereço (amigos entram de qualquer lugar).
+      • A página http://localhost:8765/celular mostra um QR code desse link, além do QR do Wi-Fi.
+
+NO CELULAR
+ • Abra o link, jogue. Para instalar como aplicativo: menu do navegador → "Adicionar à tela inicial".
+ • Na primeira abertura com internet o jogo se salva no aparelho; depois o modo SOLO funciona offline.
+ • O modo ONLINE (multiplayer) sempre precisa de internet.
+
+IMPORTANTE
+ • O link precisa ser https (todas as opções acima já são). Sem https o celular não salva o jogo para offline.
+ • Sempre que lançar uma versão nova, publique de novo: quem abrir com internet recebe a atualização sozinho.

@@ -1,0 +1,204 @@
+{
+  "base": "City-Rush-v44-GLBs-Novos.zip",
+  "unused_keys": [
+    [
+      "cerca",
+      "assets/models/decor/cerca.glb"
+    ],
+    [
+      "cercaPonta",
+      "assets/models/decor/cerca_ponta.glb"
+    ],
+    [
+      "mobEstanteBaixa",
+      "assets/models/mobiliario/mobEstanteBaixa.glb"
+    ],
+    [
+      "mobMesa",
+      "assets/models/mobiliario/mobMesa.glb"
+    ],
+    [
+      "mobGeladeira",
+      "assets/models/mobiliario/mobGeladeira.glb"
+    ],
+    [
+      "mobCaixa",
+      "assets/models/mobiliario/mobCaixa.glb"
+    ],
+    [
+      "mobAbajur",
+      "assets/models/mobiliario/mobAbajur.glb"
+    ]
+  ],
+  "removed": [
+    {
+      "path": "assets/models/veiculos/policial.glb",
+      "bytes": 180512
+    },
+    {
+      "path": "assets/models/veiculos/rollsroyce.glb",
+      "bytes": 434060
+    },
+    {
+      "path": "assets/models/veiculos/pickup.glb",
+      "bytes": 273012
+    },
+    {
+      "path": "assets/models/veiculos/van.glb",
+      "bytes": 44152
+    },
+    {
+      "path": "assets/models/veiculos/carroUrbano.glb",
+      "bytes": 164752
+    },
+    {
+      "path": "assets/models/veiculos/carroCompacto.glb",
+      "bytes": 174320
+    },
+    {
+      "path": "assets/models/veiculos/esportivoPack.glb",
+      "bytes": 252528
+    },
+    {
+      "path": "assets/models/veiculos/dodge.glb",
+      "bytes": 509708
+    },
+    {
+      "path": "assets/models/veiculos/rx7.glb",
+      "bytes": 1360144
+    },
+    {
+      "path": "assets/models/veiculos/suv.glb",
+      "bytes": 181608
+    },
+    {
+      "path": "assets/models/veiculos/lambo.glb",
+      "bytes": 175100
+    },
+    {
+      "path": "assets/models/veiculos/antigo.glb",
+      "bytes": 1689588
+    },
+    {
+      "path": "assets/models/cidade_nova/kitBaixo5.glb",
+      "bytes": 14112
+    },
+    {
+      "path": "assets/models/cidade_nova/kitGrande3.glb",
+      "bytes": 96488
+    },
+    {
+      "path": "assets/models/cidade_nova/kitGrande4.glb",
+      "bytes": 53136
+    },
+    {
+      "path": "assets/models/cidade_nova/kitTorre5.glb",
+      "bytes": 35512
+    },
+    {
+      "path": "assets/models/cidade_nova/kitTorre1.glb",
+      "bytes": 42092
+    },
+    {
+      "path": "assets/models/cidade_nova/kitTorre6.glb",
+      "bytes": 88336
+    },
+    {
+      "path": "assets/models/cidade_nova/kitTorre2.glb",
+      "bytes": 61268
+    },
+    {
+      "path": "assets/models/cidade_nova/kitGrande5.glb",
+      "bytes": 116488
+    },
+    {
+      "path": "assets/models/cidade_nova/kitBaixo3.glb",
+      "bytes": 12564
+    },
+    {
+      "path": "assets/models/cidade_nova/kitBaixo4.glb",
+      "bytes": 16192
+    },
+    {
+      "path": "assets/models/cidade_nova/kitGrande1.glb",
+      "bytes": 59680
+    },
+    {
+      "path": "assets/models/cidade_nova/kitGrande2.glb",
+      "bytes": 82984
+    },
+    {
+      "path": "assets/models/cidade_nova/kitBaixo2.glb",
+      "bytes": 16724
+    },
+    {
+      "path": "assets/models/cidade_nova/kitBaixo6.glb",
+      "bytes": 24488
+    },
+    {
+      "path": "assets/models/cidade_nova/kitTorre3.glb",
+      "bytes": 60412
+    },
+    {
+      "path": "assets/models/cidade_nova/kitBaixo1.glb",
+      "bytes": 14752
+    },
+    {
+      "path": "assets/models/cidade_nova/kitGrande6.glb",
+      "bytes": 143788
+    },
+    {
+      "path": "assets/models/cidade_nova/kitTorre4.glb",
+      "bytes": 30772
+    },
+    {
+      "path": "assets/models/decor/cacamba.glb",
+      "bytes": 19784
+    },
+    {
+      "path": "assets/models/decor/bench.glb",
+      "bytes": 12140
+    },
+    {
+      "path": "assets/models/decor/cerca_ponta.glb",
+      "bytes": 40836
+    },
+    {
+      "path": "assets/models/decor/arvore.glb",
+      "bytes": 5396
+    },
+    {
+      "path": "assets/models/decor/placa_pare.glb",
+      "bytes": 7888
+    },
+    {
+      "path": "assets/models/decor/cone.glb",
+      "bytes": 21244
+    },
+    {
+      "path": "assets/models/decor/cerca.glb",
+      "bytes": 52836
+    },
+    {
+      "path": "assets/models/mobiliario/mobCaixa.glb",
+      "bytes": 11328
+    },
+    {
+      "path": "assets/models/mobiliario/mobGeladeira.glb",
+      "bytes": 26260
+    },
+    {
+      "path": "assets/models/mobiliario/mobEstanteBaixa.glb",
+      "bytes": 20580
+    },
+    {
+      "path": "assets/models/mobiliario/mobMesa.glb",
+      "bytes": 14864
+    },
+    {
+      "path": "assets/models/mobiliario/mobAbajur.glb",
+      "bytes": 13204
+    }
+  ],
+  "saved_bytes": 6655632
+}

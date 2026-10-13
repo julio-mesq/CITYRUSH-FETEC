@@ -1,0 +1,9 @@
+CITY RUSH v46
+Cache offline: instalação leve, sem GLBs; complementação serial no menu e suspensa durante a partida. Arquivos guardados não são baixados novamente.
+Detalhes carregados após preparação inicial, um modelo por vez com intervalos para liberar a interface.
+Pré-compilação assíncrona de shaders quando suportada.
+Pedestres distantes: animação a 15 Hz, lógica fora da área visível a 5 Hz; jogador e pedestres próximos continuam em todos os quadros.
+Correção da resolução adaptativa: o modo desempenho não aumenta novamente a resolução nem interrompe a adaptação.
+Nenhum modelo ou conteúdo ativo removido.
+GitHub: substitua a pasta dist inteira, Commit + Push; publique pelo workflow Publicar City Rush.
+Não foi possível medir FPS ou testar visualmente no aparelho do usuário.

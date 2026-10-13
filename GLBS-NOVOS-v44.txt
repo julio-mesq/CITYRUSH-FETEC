@@ -1,0 +1,24 @@
+CITY RUSH v44 — NOVOS GLBs
+
+29 modelos novos gratuitos, com texturas e licenças incluídas.
+Oficina: bancadas, ferramentas, maletas, scanner, pistão e engrenagens.
+Mercado: prateleiras abastecidas, frutas, pães, freezer, caixa, cesta e carrinho.
+Cidade: toldos, marquises, guarda-sóis e pontos de ônibus com placas e mapa.
+Personagens: três variações animadas, policial de uniforme e atendente.
+Primeira pessoa: mãos GLB presas às empunhaduras, com movimento de recarga.
+Veículo: Spectral GT-RS na loja de carros do celular (T), fora do trânsito automático.
+Trabalho: caixas, carrinho de carga e paleteira.
+
+O esportivo possui interior nativo e porta e rodas separadas; V alterna a câmera.
+Seu modelo foi simplificado de 151.722 para 75.454 triângulos e de 258 para 57 primitivas.
+Novos detalhes estáticos dos interiores são agrupados por material.
+Os limites de trânsito e pedestres, progressão, missões e casas são preservados.
+Objetos de trabalho são decoração; não foram adicionadas profissões.
+Lista de fontes: dist/assets/models/visual-cc0/GLBS-v44.txt.
+
+Para atualizar GitHub Pages: copie o conteúdo de dist para a pasta do repositório, substitua os arquivos e faça Commit → Push origin.
+Os demais arquivos permitem executar localmente, preparar offline e manter o projeto.
+O multiplayer existente ainda requer internet.
+
+Validação: encaixes nas seis armas; animações e altura dos cinco personagens; quatro rodas, porta e bancos do Spectral; testes dos veículos existentes, casas, semáforos e pacote offline.
+Não foi possível executar uma inspeção visual do jogo no navegador nesta sessão. O FPS real depende do dispositivo e deve ser verificado pelo link.

@@ -1,0 +1,193 @@
+CITY RUSH — DEMO PÚBLICA v32
+
+======================================================================
+COMO JOGAR
+======================================================================
+MODO SOLO (jogar sozinho)  → funciona SEM INTERNET.
+MODO ONLINE (multiplayer)  → precisa de internet (salas por link, cooperativo ou deathmatch).
+
+Se você abrir o jogo sem internet, o botão do modo online fica desativado e o menu avisa
+"SEM INTERNET · SÓ MODO SOLO". É só tocar em JOGAR para jogar sozinho.
+
+----------------------------------------------------------------------
+JOGAR OFFLINE (modo solo) — v31
+----------------------------------------------------------------------
+Como funciona: o jogo se salva no próprio aparelho (service worker). O menu mostra:
+  "Salvando o jogo para funcionar offline…"   → baixando (cerca de 20 MB, só na primeira vez)
+  "● Pronto para jogar offline (modo solo)"    → já pode desligar a internet
+
+Passo a passo:
+ 1. Abra o jogo UMA vez com internet (link público ou "Abrir City Rush.bat") e espere o aviso verde
+    "Pronto para jogar offline".
+ 2. Depois disso pode abrir o jogo sem internet, no mesmo navegador e no mesmo endereço.
+    O progresso (dinheiro, casa, missões) fica salvo no navegador, com ou sem internet.
+ 3. (Opcional, recomendado para pendrive/PC) Dê dois cliques em "Preparar offline.bat"
+    (Mac/Linux: ./preparar-offline.sh). Com internet, ele baixa a biblioteca 3D (three.js) para dentro
+    da pasta do jogo (dist/vendor/three). Assim o jogo não depende mais de nenhum site externo.
+    Sem esse passo o jogo também funciona offline, mas só depois de ter sido aberto uma vez com internet.
+
+Observações importantes:
+ - O multiplayer NUNCA funciona offline (ele conecta os jogadores pela internet).
+ - Para instalar como aplicativo: no Chrome/Edge use "Instalar City Rush" no menu do navegador;
+   no celular, "Adicionar à tela inicial".
+ - Limpar os dados do navegador apaga o jogo salvo e o progresso. Abra de novo com internet para salvar.
+ - Se a versão do jogo mudar, ela é atualizada sozinha na próxima vez que você abrir com internet.
+ - Abrir o index.html direto do disco (file://) não funciona: use "Abrir City Rush.bat" ou um servidor local.
+ - No CELULAR, o salvamento offline só funciona pelo link público (https). Abrindo pelo IP do computador
+   (http://192.168...) o navegador do celular não permite service worker; nesse caso o jogo precisa do computador ligado.
+
+----------------------------------------------------------------------
+JOGAR ONLINE (multiplayer)
+----------------------------------------------------------------------
+Abra o link público do City Rush no navegador (o mesmo link serve para celular e computador).
+No menu, em MODO ONLINE, escolha o código da sala e o modo (COOPERATIVO ou DEATHMATCH) e toque em ENTRAR.
+Copie o link da sala para chamar amigos.
+
+======================================================================
+JOGAR NO CELULAR SEM O COMPUTADOR (link público) — v32
+======================================================================
+O QR code só funciona com o computador ligado e no mesmo Wi-Fi. Para jogar em qualquer lugar,
+publique a pasta "dist" (passo a passo em PUBLICAR.txt: a hospedagem do projeto, Netlify Drop,
+Cloudflare Pages ou GitHub Pages) e cole o endereço https em dist/link-publico.json.
+ • Botão "LINK PARA CELULAR" no menu: copia/compartilha o link (WhatsApp etc.).
+ • O link da sala do multiplayer passa a usar esse endereço (amigos entram de qualquer lugar).
+ • A página /celular mostra o QR do Wi-Fi e o QR do link público.
+ • No celular, abra o link, jogue e use "Adicionar à tela inicial": o modo solo passa a funcionar offline.
+
+======================================================================
+COMO ABRIR RAPIDAMENTE (computador)
+======================================================================
+- Windows: dois cliques em "Abrir City Rush.bat".
+- Mac/Linux: "Abrir City Rush.command".
+- Manual (Python): abra o Prompt dentro da pasta e rode  python servidor.py 8765 dist
+  depois acesse http://localhost:8765
+
+JOGAR NO CELULAR PELO COMPUTADOR (mesmo Wi-Fi)
+ 1. Celular e computador no MESMO Wi-Fi (não funciona com dados móveis nem rede de convidados).
+ 2. No computador, abra "Abrir City Rush.bat" e deixe a janela preta aberta.
+ 3. No celular, digite o endereço "No celular" mostrado na janela (ex.: http://192.168.0.10:8765),
+    ou abra http://localhost:8765/celular no computador e escaneie o QR code.
+ 4. Se não abrir: rode "Liberar acesso do celular.bat" uma vez (pede administrador) e tente de novo.
+ 5. O computador precisa ter Python instalado (python.org, marcando "Add to PATH").
+
+CONTROLES NO COMPUTADOR
+WASD: mover ou dirigir · Shift: correr · C: agachar · Ctrl: esquiva · Espaço: pular/parkour ou freio de mão
+Mouse esq.: atira/soca · Mouse dir.: mira · R: recarregar · Q: roda de armas · 1-7: troca rápida
+E: entrar/sair/interagir (também abre e fecha portas) · B: construir na casa · H: buzina
+← →: rádio · G: conversar/reanimar · Enter: chat · V: câmera · Tab: inventário · M: mapa · T: celular · Esc: pausa
+No celular, os controles aparecem automaticamente na tela (o botão ENTRAR faz o papel do E).
+
+======================================================================
+HISTÓRICO DE VERSÕES — MELHORIAS E CORREÇÕES
+======================================================================
+
+v32 (esta versão — correções após teste de outra pessoa)
+ INÍCIO DENTRO DE CASA
+ + Corrigido: ao começar o jogo dentro da casa escolhida, o jogo parecia travado e o jogador ficava num "limbo"
+   (sem casa, só a placa "CASA"). Causa: a pré-compilação de shaders criada na v30 trocava o interior ativo
+   pelo do mercado depois de a casa ser aberta. Agora ela restaura o interior que estava ativo.
+ + Corrigido: o primeiro veículo nascia em coordenadas da planta antiga (dentro do quarto). Agora nasce na
+   vaga da garagem, virado para a saída.
+ ARMA
+ + Corrigido: arma segurada ao contrário (cano para trás) em alguns personagens. Cada modelo tem o osso da mão
+   girado de um jeito; agora a arma confere para onde o cano aponta e se corrige sozinha (mirando e relaxada,
+   inclusive cano para cima). Também deixou de procurar os ossos do braço pelo nome a cada quadro.
+ DESEMPENHO (qualidade média e alta)
+ + Luzes: eram 8 postes de rua sempre contados no cálculo de cada pixel (mesmo de dia) + luzes de interior
+   fixas adicionadas na v31. Agora há um conjunto único de 4 luzes (2 no celular) que à noite viram os
+   postes mais próximos e dentro de casa/loja viram as lâmpadas do cômodo, sem criar nem ligar luzes.
+ + Sombras: a área sombreada caiu de 360×360 m para 190×190 m (menos objetos redesenhados e sombra mais
+   nítida), é atualizada a cada 2 quadros e o alvo anda em grade de 2 m (sem tremedeira).
+ + Resolução dinâmica: se o aparelho não sustenta a taxa de quadros, a resolução cai em degraus de 15%
+   (e sobe de novo quando sobra folga). Só depois, se mesmo assim ficar lento, as sombras são desligadas
+   (uma vez) e, por fim, o modo desempenho mínimo.
+ + O bloom (brilho) da qualidade alta é calculado na metade da resolução.
+ + Qualidade média agora mantém as sombras também ao trocar pelo menu (antes desligava e recompilava tudo).
+ LINK PARA CELULAR
+ + Botão "LINK PARA CELULAR" no menu, link da sala usando o endereço público, QR do link público em /celular,
+   arquivo dist/link-publico.json, guia PUBLICAR.txt e publicação automática no GitHub Pages
+   (.github/workflows/pages.yml).
+
+v31
+ MODO OFFLINE
+ + Jogar sozinho funciona sem internet (service worker salva o jogo no aparelho; aviso no menu).
+ + Biblioteca 3D pode ficar dentro da pasta do jogo ("Preparar offline.bat"); se não estiver, usa a CDN
+   e guarda uma cópia na primeira visita.
+ + Sem internet o botão do modo online é desativado e explica o motivo; multiplayer só online.
+ + Jogo instalável como aplicativo (manifest + ícones).
+ + A fonte do Google não bloqueia mais o carregamento quando não há internet.
+ CASAS (planta nova, antes confusa)
+ + A garagem agora fica NA FRENTE da casa, onde o carro entra. Antes o carro estacionava dentro do quarto,
+   em cima da cama, e a "garagem" desenhada ficava nos fundos.
+ + Planta coerente: Oeste = garagem (frente), quarto (fundos) e banheiro; Leste = sala (frente, com a porta social)
+   e cozinha/jantar (fundos).
+ + Nenhum móvel dentro de outro, na parede, na frente de porta ou na vaga do carro (validado por teste automático).
+ + Móveis novos com acabamento: sofá com almofadas, cama com travesseiros e manta, guarda-roupa com portas e
+   puxadores, fogão com bocas e forno, pia com torneira, geladeira, mesa com cadeiras, estantes com livros,
+   TV com rack, banheiro completo, bancada de oficina, prateleira metálica, pneus e caixa de ferramentas.
+   Cores naturais (antes: cores lisas e saturadas que pareciam "não renderizadas") e 3 paletas, uma por casa.
+ + O interior da casa usa poucas malhas por material (mais leve no celular).
+ + Modo construção: os 12 pontos de colocação foram refeitos em locais livres; os móveis do catálogo usam os
+   novos modelos e cabem no ponto escolhido, mesmo girados.
+ + As 4 portas foram reposicionadas nos novos vãos (garagem↔sala, quarto↔cozinha, garagem↔quarto, quarto↔banheiro).
+ + A cama de dormir (E perto da cama) acompanha a nova posição.
+ Observação: mercado, posto e oficina continuam com os móveis antigos.
+
+v30
+ DESEMPENHO (queda de FPS que tinha voltado)
+ + O jogo não cria, liga ou desliga mais luzes durante a partida. Mudar a quantidade de luzes faz o navegador
+   recompilar todos os materiais, e isso congelava o jogo ao entrar em carro, ao entrar em prédios e à noite.
+   Faróis, neon e luzes dos interiores agora usam um conjunto fixo de luzes que só muda de lugar.
+ + Shaders de interiores, tiros e explosões são pré-compilados na tela de carregamento.
+ + Cada tiro calcula a caixa dos carros próximos uma única vez (antes: uma vez por projétil e por carro do mapa;
+   a escopeta era o pior caso).
+ + O modo desempenho automático não mexe mais nas sombras (trocar sombras recompila tudo) e um único quadro
+   travado não ativa mais o modo desempenho sozinho.
+ + Busca de colisão da cidade ficou mais leve (chaves numéricas em vez de texto).
+ PORTAS
+ + Portas da casa têm batente, verga, dobradiça no vão da parede e maçaneta. E perto da porta abre/fecha.
+   Aberta libera a passagem, fechada bloqueia; não fecha se você estiver parado no vão.
+   (Antes: caixas tortas, fora do vão, que não abriam.)
+ PRIMEIRA PESSOA
+ + Arma e braços cerca de 34% maiores em celular e computador. Ajuste em FP_ESCALA (dist/main.js).
+
+v29
+ - Primeira pessoa: arma reduzida (de ~33% para ~20% da altura da tela) e braços refeitos (manga até o punho,
+   antebraço mais fino, mãos com polegar). (Substituído em parte pela v30: a arma ficou pequena demais.)
+
+v28
+ - Textos e painéis da tela (vida, missão, dicas, arma/munição, velocímetro, minimapa) ficaram menores;
+   botões de toque diminuíram só um pouco.
+ - Arma na mão do personagem (3ª pessoa) reduzida para proporção realista (o fuzil tinha quase a altura do personagem).
+ - Notebook/tablet com tela de toque volta a mostrar os botões de toque.
+
+v27 (a, b, c, d)
+ - v27: a missão fica abaixo da barra de vida, sem cobri-la; no celular, minimapa, arma/munição, dicas e botões
+   de ação ficam em áreas separadas.
+ - v27b: o atalho usa servidor.py (sem cache do navegador, sempre carrega a versão mais nova); PCs com tela de
+   toque + mouse usam o modo computador (sem botões virtuais).
+ - v27c: se a porta 8765 já estiver em uso (City Rush antigo aberto), o atalho avisa.
+ - v27d: jogar no celular pela rede local (QR code em /celular, "Liberar acesso do celular.bat").
+
+v26 (otimização)
+ - Efeitos de sangue, tiros e explosões reutilizam objetos (sem picos de memória).
+ - NPC derrotado não continua processando combate e reaparece sem duplicar abates.
+ - Visão e busca de cobertura da polícia rodam em intervalos controlados.
+ - Quantidade de pessoas, trânsito, partículas e resolução se adaptam ao aparelho.
+ - Perfil médio mantém iluminação e reflexos; pós-processamento pesado só no alto.
+ - Carregamento dos GLBs limitado em paralelo para evitar congelamentos.
+ - A queda de FPS ao derrotar NPCs foi corrigida; no menu de pausa, Qualidade Baixa dá a maior fluidez.
+
+======================================================================
+LIMITAÇÕES CONHECIDAS
+======================================================================
+- As verificações automáticas (pasta tests/) confirmam lógica, planta da casa, portas, luzes e service worker,
+  mas não substituem uma partida real: confira visualmente casas, portas e fluidez no seu aparelho.
+- Multiplayer não funciona offline.
+- Eu (desenvolvimento) não consegui abrir o jogo num navegador: a correção da arma foi validada com matemática
+  de rotação e as demais por testes de lógica. Confirme no aparelho: arma na mão, início dentro de casa e fluidez.
+- O link público depende de VOCÊ publicar a pasta dist (PUBLICAR.txt); não é possível gerar esse link daqui.
+- Mercado, posto e oficina ainda usam os móveis antigos.
+
+COMO RODAR OS TESTES (opcional, precisa de Node.js)
+  Dentro da pasta do jogo:  node tests/offline.mjs   (e os demais arquivos de tests/)

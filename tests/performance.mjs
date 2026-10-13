@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const fx=fs.readFileSync(new URL('../dist/src/effects.js',import.meta.url),'utf8');
+const npc=fs.readFileSync(new URL('../dist/src/npcs.js',import.meta.url),'utf8');
+const police=fs.readFileSync(new URL('../dist/src/police.js',import.meta.url),'utf8');
+const main=fs.readFileSync(new URL('../dist/main.js',import.meta.url),'utf8');
+const audio=fs.readFileSync(new URL('../dist/src/audio.js',import.meta.url),'utf8');
+assert.match(fx,/livres\.pop/);assert.doesNotMatch(fx,/material\.dispose/);
+assert.match(fx,/rastrosLivres\.pop/);assert.match(audio,/ruidoCache\.get/);
+assert.match(npc,/this\.caido=2\.2/);assert.match(npc,/this\.visaoCd/);
+assert.match(police,/visaoCd=\.2/);assert.match(main,/fraco \? 14 : 24/);
+assert.match(main,/lento > 2\.2/);assert.match(main,/if\(n\.caido\)continue/);
+console.log('Desempenho: pool de efeitos, NPCs derrotados e IA policial limitada OK');

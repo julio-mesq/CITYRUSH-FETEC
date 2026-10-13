@@ -1,0 +1,24 @@
+CITY RUSH — CASAS ANEXADAS (BASE: ZIP v33)
+
+Esta edição mantém a versão enviada pelo jogador e modifica apenas as casas.
+
+Escolhas do menu inicial:
+0 — Casa compacta mobiliada: casa (1).glb, mesmo arquivo de casa (2).glb.
+1 — Casa moderna com garagem externa: casa_j.glb.
+2 — Residência de luxo com piscina: casa.glb.
+3 — Casa de campo com piscina e varanda: casa_de_campo_me(1).glb.
+
+Cada opção tem fachada própria e uma decoração interna específica. As casas
+modernas e de campo têm garagem externa coberta. Luxo e campo têm piscina
+e pátio acessível pela sala. Quarto, banheiro, cozinha, portas, sono, construção
+e garagem conservam as interações existentes.
+
+Os saves antigos mantêm os índices 0, 1 e 2; a casa de campo é a opção nova.
+Para escolher outra casa no início, use Novo jogo, que apaga o progresso atual.
+Também é possível adquirir outra casa pelo celular do jogo, sem apagar o save.
+
+As casas grandes carregam por proximidade. A casa de campo foi dividida em
+um arquivo de cena e três arquivos de geometria: extraia o ZIP inteiro.
+Os modelos foram agrupados por material, mantendo todos os triângulos originais.
+Armas, polícia, veículos, controles, missões e sistemas online permanecem iguais
+ao arquivo v33 fornecido. A lista offline inclui os novos arquivos de casas.
