@@ -29,7 +29,7 @@ export function atualizarCamera(cam, agora, dt, jog, pov, fovMira = 0) {
     if(INT.on){pos.x=THREE.MathUtils.clamp(pos.x,INT.x-INT.w/2+.4,INT.x+INT.w/2-.4);pos.z=THREE.MathUtils.clamp(pos.z,INT.z-INT.d/2+.4,INT.z+INT.d/2-.4);pos.y=Math.min(pos.y,INT.tipo==='oficina'?6.7:3.7);}
     // A mesma proteção vale fora e dentro dos prédios. A câmera recua antes da
     // primeira parede ou móvel, evitando atravessar fachadas, tetos e estantes.
-    for(let k=1;k<=20;k++){const t=k/20,x=a.x+(pos.x-a.x)*t,z=a.z+(pos.z-a.z)*t;if(colide(x,z,.2,1.7)){pos.set(a.x+(pos.x-a.x)*Math.max(0,t-.075),pos.y,a.z+(pos.z-a.z)*Math.max(0,t-.075));break;}}
+    for(let k=1;k<=20;k++){const t=k/20,x=a.x+(pos.x-a.x)*t,z=a.z+(pos.z-a.z)*t;if(colide(x,z,.2,1.7)){const f=Math.max(.08,t-.075),olho=a.y+(c?1.4:1.6);pos.set(a.x+(pos.x-a.x)*f,olho+(pos.y-olho)*f,a.z+(pos.z-a.z)*f);break;}} // perto da parede a câmera também desce até a altura dos olhos: nada de visão de cima da cabeça
     if(cam.position.distanceTo(a)>45)cam.position.copy(pos);else cam.position.lerp(pos, 1 - Math.exp(-s * dt));
     if (fovMira && !c) { // mira para a frente da câmera; o jogador continua visível à esquerda, fora do crosshair
       const alcance=45,cp=Math.cos(jog.pitch);
