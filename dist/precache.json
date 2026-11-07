@@ -1,5 +1,5 @@
 {
-"versao": "v32",
+"versao": "v33",
 "arquivos": [
 "./",
 "index.html",
@@ -32,6 +32,10 @@
 "src/npcs.js",
 "src/offline.js",
 "src/pause.js",
+"src/perf.js",
+"src/culling.js",
+"src/lod.js",
+"src/vehicle-classes.js",
 "src/phone.js",
 "src/player.js",
 "src/police.js",

@@ -1,16 +1,18 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { CASAS } from './casas-catalogo.js';
+import { desquantizar } from './assets.js';
 
 // As quatro casas são carregadas por proximidade, uma de cada vez. Os arquivos
 // estáticos já foram agrupados por material sem remover as fachadas originais.
 export function criarCasasAnexadas(scene, lugares) {
-  const loader=new GLTFLoader(),casas=lugares.filter(l=>l.tipo==='casa').map(l=>({l,def:CASAS[l.idx],grupo:new THREE.Group(),estado:'pendente',tentativa:0}));
+  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),casas=lugares.filter(l=>l.tipo==='casa').map(l=>({l,def:CASAS[l.idx],grupo:new THREE.Group(),estado:'pendente',tentativa:0}));
   let ocupado=false;
   for(const c of casas){c.grupo.position.set(c.l.x,.03,c.l.z);c.grupo.name='casa-escolha-'+c.l.idx;scene.add(c.grupo);}
   function carregar(c){
     ocupado=true;c.estado='carregando';
-    loader.load('assets/models/casas/'+(c.def.arquivo||c.def.modelo+'.glb'),gltf=>{
+    loader.load('assets/models/casas/'+(c.def.arquivo||c.def.modelo+'.glb'),gltf=>{desquantizar(gltf);
       const modelo=gltf.scene,box=new THREE.Box3().setFromObject(modelo),size=box.getSize(new THREE.Vector3()),centro=box.getCenter(new THREE.Vector3());
       const escala=c.def.tamanho/Math.max(size.x,size.z,.001),base=new THREE.Group();
       // A casa de campo inclui um terreno espesso e uma piscina abaixo do piso.

@@ -85,10 +85,10 @@ export function criarMundo(scene, fraco, luzes) {
   criarSuperficiesUrbanas(scene,fraco);
 
   // Asfalto com granulação, dupla faixa amarela e limites refletivos.
-  const tv = texturaUrbana('#20262a', 22); tv.repeat.set(1.4, 200);
+  const tv = texturaUrbana('#5b6266', 22); tv.repeat.set(1.4, 200); // asfalto cinza-escuro legível (antes quase preto: textura escura × cor escura)
   const th = tv.clone(); th.repeat.set(200, 1.4); th.needsUpdate = true;
-  const asfV = new THREE.MeshStandardMaterial({ color: 0x4d565d, map: tv, roughness: .91, metalness: .035 });
-  const asfH = new THREE.MeshStandardMaterial({ color: 0x4d565d, map: th, roughness: .91, metalness: .035 });
+  const asfV = new THREE.MeshStandardMaterial({ color: 0xd2d6d8, map: tv, roughness: .86, metalness: .035 });
+  const asfH = new THREE.MeshStandardMaterial({ color: 0xd2d6d8, map: th, roughness: .86, metalness: .035 });
   const amarela = new THREE.MeshStandardMaterial({ color: 0xffc928, emissive: 0x6b4700, emissiveIntensity: .12, roughness: .6 });
   const branca = new THREE.MeshStandardMaterial({ color: 0xe8edf0, emissive: 0x333333, emissiveIntensity: .08, roughness: .55 });
   const ruasV = new THREE.InstancedMesh(new THREE.BoxGeometry(14, .1, 2000), asfV, 21);
@@ -288,7 +288,7 @@ export function criarMundo(scene, fraco, luzes) {
   const nuvens = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 5), nuvemMat, fraco ? 24 : 72);
   const nm = new THREE.Matrix4(), nq = new THREE.Quaternion();
   for (let i = 0; i < nuvens.count; i++) nm.compose(new THREE.Vector3(R(-950, 950), R(115, 220), R(-950, 950)), nq, new THREE.Vector3(R(12, 30), R(2.5, 6), R(7, 18))), nuvens.setMatrixAt(i, nm);
-  nuvens.frustumCulled = false; scene.add(nuvens);
+  nuvens.frustumCulled = false; nuvens.userData.semCull = true; scene.add(nuvens);
   // Luz do sol + céu dinâmico (azul -> laranja -> roxo)
   const sol = new THREE.DirectionalLight(0xfff3e0, 1.5); scene.add(sol, sol.target);
   if (!fraco) { // sombras dinâmicas do sol (desligadas em dispositivos fracos)
@@ -296,7 +296,7 @@ export function criarMundo(scene, fraco, luzes) {
     Object.assign(sol.shadow.camera, { left: -95, right: 95, top: 95, bottom: -95, near: 10, far: 900 }); // área menor = menos objetos redesenhados e sombra mais nítida
     sol.shadow.bias = -.0015; sol.shadow.normalBias = .02;
   }
-  const amb = new THREE.HemisphereLight(0x87ceeb, 0x444444, .6); scene.add(amb);
+  const amb = new THREE.HemisphereLight(0x9fd3f0, 0x5a5047, .6); scene.add(amb); // chão devolve luz quente, como concreto ao sol
   // Postes de rua: pontos entregues ao conjunto compartilhado de luzes (src/luzes.js), que acende só os mais próximos.
   if (!fraco && luzes) luzes.definirRua([[-109, -85], [91, -85], [-109, 115], [91, 115], [-209, 15], [191, 15], [-9, -185], [-9, 215]]);
   const dia = new THREE.Color(0x87ceeb), por = new THREE.Color(0xff8c00), noite = new THREE.Color(0x191970);
@@ -310,7 +310,7 @@ export function criarMundo(scene, fraco, luzes) {
     ceuMat.uniforms.meio.value.copy(col).lerp(new THREE.Color(h < 0 ? 0x344d77 : 0x82bad2), .42);
     ceuMat.uniforms.horizonte.value.setHex(h < -.05 ? 0x18203d : h < .32 ? 0xe98958 : 0x79abc2);
     discoSol.position.copy(sol.position); discoSol.visible = h > -.18; discoSol.material.color.setHex(h < .25 ? 0xffa24d : 0xfff4bd);
-    sol.color.setHex(h < .22 ? 0xffaa67 : 0xffe6c5); sol.intensity = Math.max(.22, h * 1.28); amb.intensity = .4 + Math.max(0, h) * .4 + (INT.on ? INT.ambInt || 0 : 0); // contraste natural sem brancos estourados
+    sol.color.setHex(h < .22 ? 0xffaa67 : 0xffe6c5); sol.intensity = Math.max(.22, h * 2.35); amb.intensity = .45 + Math.max(0, h) * .5 + (INT.on ? INT.ambInt || 0 : 0); // contraste natural sem brancos estourados
     matPredio.emissiveIntensity = Math.min(1.25, Math.max(0, (.18 - h) * 4.5)); // janelas acendem à noite
     const noiteF = Math.min(1, Math.max(0, (.1 - h) * 3)); luzes?.noite(noiteF);
     nuvemMat.color.setHex(h < 0 ? 0x6d7895 : h < .28 ? 0xffc7a8 : 0xffffff);
