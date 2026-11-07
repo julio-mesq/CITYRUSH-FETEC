@@ -10,6 +10,7 @@ import * as Assets from './assets.js';
 import { passoDrift } from './mechanics.js';
 import { prepararDinamica, atualizarDinamica } from './vehicle-dynamics.js';
 import { criarImpostor, alternarLod, descartarImpostor } from './lod.js';
+import { classeDoModelo } from './vehicle-classes.js';
 
 export const MODELOS = [
   { marca: 'City', nome: 'Hatch Compacto', cor: 0xd9d9d9, w: 1.7, h: 1.4, l: 3.9, cab: .55, vmax: 30, acel: 12, preco: 9000, glb: 'carroCompacto' },
@@ -58,7 +59,7 @@ export class Carro {
     this.nome = m.marca + ' ' + m.nome; this.obj = new THREE.Group();
     this.duasRodas = ['moto', 'moto2', 'bike'].includes(m.glb);
     this.tipoCondutor = m.glb === 'bike' ? 'bike' : this.duasRodas ? 'moto' : 'carro';
-    this.vmaxBase = m.vmax; this.acelBase = m.acel; this.partesPintura = []; this.partesRoda = [];
+    this.vmaxBase = m.vmax; this.acelBase = m.acel; this.fis = classeDoModelo(m); /* freio, esterço, peso e aderência da classe */ this.partesPintura = []; this.partesRoda = [];
     this.tuning = { motor: 0, pintura: m.cor, aerofolio: 0, rodas: 0, suspensao: 1, turbo: false, neon:0 };
     this.volante = 0; this.marcha = 'N'; this.rpm = 800; this.farolLigado = false; this.lateral=0; this.impactoCd=0;
     const modelo3d = m.glb && Assets.clonarCena(m.glb);
@@ -235,29 +236,30 @@ export class Carro {
       const a = (teclas.KeyW ? 1 : 0) - (teclas.KeyS ? 1 : 0);
       const motor = 1 + this.tuning.motor * .13 + (this.tuning.turbo ? .15 : 0);
       const freandoSentido = a && a * this.v < -.5;
-      this.v += a * (freandoSentido ? 34 : this.acelBase * motor) * dt;
+      const f = this.fis;
+      this.v += a * (freandoSentido ? f.freio : this.acelBase * motor) * dt;
       if (teclas.Space) this.v *= Math.exp(-(Math.abs(this.v)>8?1.8:6) * dt);
       const dirAlvo = (teclas.KeyA ? 1 : 0) - (teclas.KeyD ? 1 : 0);
-      this.volante += (dirAlvo - this.volante) * (1 - Math.exp(-9 * dt));
+      this.volante += (dirAlvo - this.volante) * (1 - Math.exp(-f.volanteVel * dt));
       const aderencia = [1, 1.08, 1.16][this.tuning.rodas] || 1;
-      const velocidade = Math.abs(this.v), resposta = .48 + .62 * (1 - Math.min(1, velocidade / Math.max(1, this.vmaxBase)));
-      this.yaw += this.volante * dt * 1.85 * resposta * aderencia * Math.max(-1, Math.min(1, this.v / 5.5));
+      const velocidade = Math.abs(this.v), resposta = (1.1 - f.altaVel) + f.altaVel * (1 - Math.min(1, velocidade / Math.max(1, this.vmaxBase)));
+      this.yaw += this.volante * dt * f.giro * resposta * aderencia * Math.max(-1, Math.min(1, this.v / 5.5));
     } else this.volante *= Math.exp(-8 * dt);
     const vmax = this.vmaxBase * (1 + this.tuning.motor * .1 + (this.tuning.turbo ? .13 : 0));
     const acelerando = dirigindo && (teclas.KeyW || teclas.KeyS);
-    this.v *= Math.exp(-(acelerando ? .14 : .46) * dt);
-    this.v = Math.max(-9, Math.min(vmax, this.v)); if (Math.abs(this.v) < .025) this.v = 0;
+    this.v *= Math.exp(-(acelerando ? this.fis.arrastoAcel : this.fis.arrasto) * dt);
+    this.v = Math.max(-this.fis.re, Math.min(vmax, this.v)); if (Math.abs(this.v) < .025) this.v = 0;
     const kmh = Math.abs(this.v) * 3.6;
     this.marcha = this.v < -.6 ? 'R' : kmh < 2 ? 'N' : String(Math.min(6, Math.max(1, Math.ceil(kmh / Math.max(18, vmax * 3.6 / 6)))));
     const faixa = this.marcha === 'N' || this.marcha === 'R' ? .18 : (kmh % Math.max(18, vmax * 3.6 / 6)) / Math.max(18, vmax * 3.6 / 6);
     this.rpm += ((900 + faixa * 6100 + (acelerando ? 650 : 0)) - this.rpm) * (1 - Math.exp(-7 * dt));
-    this.lateral=passoDrift(this.lateral,this.v,this.volante,dirigindo&&teclas.Space&&!this.duasRodas,1+this.tuning.rodas*.15,dt);
+    this.lateral=passoDrift(this.lateral,this.v,this.volante,dirigindo&&teclas.Space&&!this.duasRodas,(1+this.tuning.rodas*.15)*this.fis.aderencia,dt);
     const p = this.obj.position, dx = (-Math.sin(this.yaw)*this.v+Math.cos(this.yaw)*this.lateral)*dt, dz = (-Math.cos(this.yaw)*this.v-Math.sin(this.yaw)*this.lateral)*dt;
     const raio=this.duasRodas?.45:Math.max(.85,this.m.w*.48),bateX=colide(p.x+dx,p.z,raio),bateZ=colide(p.x,p.z+dz,raio);
-    if(bateX&&bateZ){if(!this.impactoCd){this.hp=Math.max(0,this.hp-Math.abs(this.v)*.72);this.impactoCd=.3;}this.v*= -.16;this.lateral*=.22;}
+    if(bateX&&bateZ){if(!this.impactoCd){this.hp=Math.max(0,this.hp-Math.abs(this.v)*.72*this.fis.impacto);this.impactoCd=.3;}this.v*= -.16;this.lateral*=.22;}
     else{if(!bateX)p.x+=dx;else this.lateral*=.35;if(!bateZ)p.z+=dz;else this.v*=.38;}
     this.obj.rotation.y = this.yaw;
-    const inclinacao = this.duasRodas ? -this.volante * Math.min(1, Math.abs(this.v) / 10) * .29 : -this.volante*Math.min(1,Math.abs(this.v)/18)*.025;
+    const inclinacao = this.duasRodas ? -this.volante * Math.min(1, Math.abs(this.v) / 10) * this.fis.rolagem : -this.volante*Math.min(1,Math.abs(this.v)/18)*this.fis.rolagem;
     this.obj.rotation.z += (inclinacao - this.obj.rotation.z) * (1 - Math.exp(-7 * dt));
     const mergulho=dirigindo?THREE.MathUtils.clamp(((teclas.KeyS?1:0)-(teclas.KeyW?1:0))*Math.abs(this.v)/this.vmaxBase*.035,-.035,.035):0;
     this.obj.rotation.x+=(mergulho-this.obj.rotation.x)*(1-Math.exp(-5*dt));
