@@ -32,6 +32,7 @@
 "src/npcs.js",
 "src/offline.js",
 "src/pause.js",
+"src/perf.js",
 "src/phone.js",
 "src/player.js",
 "src/police.js",

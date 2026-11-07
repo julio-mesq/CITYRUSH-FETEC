@@ -35,6 +35,7 @@ import * as Moradia from './src/housing.js';
 import * as Prog from './src/progression.js';
 import * as Conq from './src/achievements.js';
 import * as Pause from './src/pause.js';
+import { criarPainelDesempenho } from './src/perf.js';
 iniciarLinkCelular((t)=>UI.notificar(t)); // botão LINK PARA CELULAR (UI é definido logo abaixo; só é usado ao clicar)
 // O cache offline começa depois da preparação do jogo, sem disputar a carga inicial.
 
@@ -354,12 +355,19 @@ $('onlinePlay').onclick = async e => {
     console.error('[online]', erro); msg.textContent = online() ? 'NÃO FOI POSSÍVEL CONECTAR' : 'SEM INTERNET · SÓ MODO SOLO'; UI.notificar('Modo online indisponível'+(online()?'':' (sem internet)')+'. Você ainda pode jogar sozinho, até offline.');
   } finally { b.disabled = false; }
 };
+// Ao travar o mouse, alguns navegadores enviam um primeiro movimento com um salto enorme
+// (movementX/Y de centenas de pixels): a câmera ia direto ao limite e ficava rente ao chão.
+let ignorarMovimento=0;
+document.addEventListener('pointerlockchange', () => { if (document.pointerLockElement) ignorarMovimento = 2; });
 document.addEventListener('pointerlockchange', () => { if (!mobile && !document.pointerLockElement && !telaAberta) { rodando = false;habilitarControles(false); $('menu').classList.remove('off'); } });
 addEventListener('contextmenu', e => e.preventDefault());
 addEventListener('mousedown', e => { if (!rodando || !document.pointerLockElement) return; if (e.button === 0) teclas.Mouse0 = true; if (e.button === 2) jog.mira = true; });
 addEventListener('mouseup', e => { if (e.button === 0) teclas.Mouse0 = false; if (e.button === 2) jog.mira = false; });
 addEventListener('mousemove', e => {
-  if (!document.pointerLockElement) return; const s = (jog.mira ? .0012 : .0025)*config.sensibilidade; semMouse = 0;
+  if (!document.pointerLockElement) return;
+  if (ignorarMovimento > 0) { ignorarMovimento--; return; }
+  if (Math.abs(e.movementX) > 350 || Math.abs(e.movementY) > 350) return; // salto espúrio do navegador, não um movimento real
+  const s = (jog.mira ? .0012 : .0025)*config.sensibilidade; semMouse = 0;
   if (jog.veiculo) jog.olho -= e.movementX * s; else jog.cameraYaw -= e.movementX * s; // câmera livre a pé e no carro
   jog.pitch = Math.max(-1, Math.min(1, jog.pitch - e.movementY * s));
 });
@@ -586,6 +594,8 @@ try{
 }catch(e){console.warn('[preaquecer] ignorado:',e);}
 await passo(100, 'Pronto!');await esperarCarrossel(); $('carga').classList.add('off');
 iniciarOffline();iniciarExtras();
+const painelPerf=criarPainelDesempenho(renderer,{texto:()=>`qualidade ${config.qualidade} · resolução ${Math.round(prAtual*100)}%`});
+if(new URLSearchParams(location.search).has('perf'))window.__CR={renderer,scene,cam,jog,carros,npcs,transito,painelPerf,teclas,config};
 let atividadeOffline=null;
 let ultimo = performance.now(), quadroSombra = 0;
 function loop(agora) {
@@ -593,6 +603,7 @@ function loop(agora) {
   const atividade=rodando&&!Pause.estaAberto()&&!telaAberta;
   if(atividade!==atividadeOffline){atividadeOffline=atividade;navigator.serviceWorker?.controller?.postMessage({tipo:'atividade',jogando:atividade});}
   const bruto = (agora - ultimo) / 1000, dt = Math.min(.05, bruto); ultimo = agora;
+  painelPerf.quadro(bruto*1000);
   if (!rodando) { A.motor(-1); A.sirene(false); return; }
   if(Pause.estaAberto()){A.motor(-1);A.sirene(false);return;}
   lento = bruto > 1 / 35 ? lento + Math.min(bruto, .1) : Math.max(0, lento - bruto); // FPS baixo sustentado mesmo após reduzir a resolução => qualidade mínima

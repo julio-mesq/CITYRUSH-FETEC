@@ -23,6 +23,7 @@ export function atualizarCamera(cam, agora, dt, jog, pov, fovMira = 0) {
     let d = c ? 9 : 4.5, h = c ? 3.5 - jog.pitch * 2 : 2.4 - jog.pitch * 2, lado = 0, s = 8;
     if (pov === 3) { d = c ? 8 : 3.2; h = 1.9 - jog.pitch * 1.5; lado = 1.1; s = 3; fov = 60; }
     if (fovMira && !c) { d = 2.8; h = 1.78 - jog.pitch * 1.5; lado = 1.2; s = 12; fov = fovMira; } // mira sobre o ombro: personagem deslocado para a esquerda do crosshair
+    h = Math.max(c ? .9 : .65, h); // olhando para cima a câmera desce, mas nunca encosta no asfalto
     if (pov === 2) { const t = agora / 4000; pos.set(a.x + Math.sin(t) * 18, a.y + 8, a.z + Math.cos(t) * 18); }
     else pos.set(a.x + Math.sin(yaw) * d + Math.cos(yaw) * lado, a.y + h, a.z + Math.cos(yaw) * d - Math.sin(yaw) * lado);
     if(INT.on){pos.x=THREE.MathUtils.clamp(pos.x,INT.x-INT.w/2+.4,INT.x+INT.w/2-.4);pos.z=THREE.MathUtils.clamp(pos.z,INT.z-INT.d/2+.4,INT.z+INT.d/2-.4);pos.y=Math.min(pos.y,INT.tipo==='oficina'?6.7:3.7);}
