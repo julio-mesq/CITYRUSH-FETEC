@@ -1,6 +1,8 @@
 // Carrega e armazena modelos .glb em duas etapas: veículos/personagens/móveis
 // essenciais primeiro; prédios e detalhes depois, em segundo plano.
+import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import * as SkeletonUtilsNS from 'three/addons/utils/SkeletonUtils.js';
 // Versões diferentes do three.js exportam esse módulo de formas diferentes
 // (objeto nomeado "SkeletonUtils" ou funções soltas) — cobre os dois casos.
@@ -181,7 +183,23 @@ export const NOVOS = {
   medBanco: 'assets/models/cidade_nova/medBanco.glb',
 };
 
-const loader = new GLTFLoader();
+// GLBs comprimidos com meshopt trazem posições/normais/UVs em inteiros (quantizados).
+// Código que funde ou recorta geometria (static-models, furniture, vehicle-dynamics)
+// usa applyMatrix4, que estouraria o intervalo inteiro: convertemos para float ao carregar.
+// O ganho de download (~60%) continua; a memória de GPU fica igual à de antes.
+export function desquantizar(gltf) {
+  gltf?.scene?.traverse(o => {
+    const g = o.geometry; if (!g) return;
+    for (const nome of ['position', 'normal', 'uv', 'uv1', 'tangent']) {
+      const a = g.attributes[nome]; if (!a || (a.array instanceof Float32Array && !a.isInterleavedBufferAttribute)) continue;
+      const f = new Float32Array(a.count * a.itemSize);
+      for (let i = 0; i < a.count; i++) for (let c = 0; c < a.itemSize; c++) f[i * a.itemSize + c] = c === 0 ? a.getX(i) : c === 1 ? a.getY(i) : c === 2 ? a.getZ(i) : a.getW(i);
+      g.setAttribute(nome, new THREE.BufferAttribute(f, a.itemSize));
+    }
+  });
+  return gltf;
+}
+const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder); // GLBs grandes vêm comprimidos (EXT_meshopt_compression)
 const cache = {};
 const emCarga = new Map(), porURL = new Map();
 
@@ -189,7 +207,7 @@ function carregar1(chave, url) {
   if (cache[chave]) return Promise.resolve(true);
   if (emCarga.has(chave)) return emCarga.get(chave);
   let download=porURL.get(url);
-  if(!download){download=new Promise(resolve=>{loader.load(url,gltf=>resolve(gltf),undefined,erro=>{console.warn('[assets] falha em '+url,erro);porURL.delete(url);resolve(null);});});porURL.set(url,download);}
+  if(!download){download=new Promise(resolve=>{loader.load(url,gltf=>resolve(desquantizar(gltf)),undefined,erro=>{console.warn('[assets] falha em '+url,erro);porURL.delete(url);resolve(null);});});porURL.set(url,download);}
   const tarefa=download.then(gltf=>{if(!gltf)return false;cache[chave]=gltf;return true;}).finally(()=>emCarga.delete(chave));
   emCarga.set(chave,tarefa);return tarefa;
 }

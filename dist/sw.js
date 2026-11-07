@@ -4,7 +4,7 @@
 //  • Código (html/js/css): rede primeiro (recebe atualizações) e cai para o cache se estiver offline.
 //  • Modelos, imagens e áudio: cache primeiro (rápido e funciona offline).
 //  • three.js / fontes (CDN): guardados no primeiro acesso; depois funcionam offline.
-const VERSAO = 'cityrush-v46';
+const VERSAO = 'cityrush-v47';
 const NUCLEO = VERSAO + '-nucleo', EXTRA = VERSAO + '-extra';
 const CDNS = ['cdn.jsdelivr.net', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const ehCodigo = url => /\.(?:html|js|mjs|css|json|webmanifest)$/i.test(url.pathname) || url.pathname.endsWith('/');
