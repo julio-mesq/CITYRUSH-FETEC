@@ -12,7 +12,7 @@ export function prepararGraficos(renderer, scene, camera, fraco, qualidade='medi
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   // Exposição mais baixa preserva céu, fachadas claras e faróis sem o aspecto
   // “estourado” que aparecia principalmente ao meio-dia.
-  renderer.toneMappingExposure = fraco ? .8 : .84;
+  renderer.toneMappingExposure = fraco ? .9 : .95; // com o sol mais forte (world.js) o meio-dia fica claro sem estourar
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   // Uma iluminação ambiente neutra dá leitura melhor a lataria, vidro e metais
@@ -40,7 +40,8 @@ export function prepararGraficos(renderer, scene, camera, fraco, qualidade='medi
   // O perfil médio preserva tone mapping, reflexos e luzes, mas renderiza a
   // cena diretamente. Bloom e afterimage ficam no perfil alto, pois dobrar os
   // passes de tela era caro em notebooks e celulares.
-  const definir=q=>{perfil=q;ativa=q==='alta';brilho.enabled=q==='alta';movimento.enabled=q==='alta'&&velocidade>24;};
+  const alto=q=>q==='alta'||q==='ultra';
+  const definir=q=>{perfil=q;ativa=alto(q);brilho.enabled=alto(q);movimento.enabled=alto(q)&&velocidade>24;};
   definir(qualidade);
   // O bloom (brilho suave) é caro e quase invisível em resolução total: calcula-o na metade.
   let prAtual = Math.min(devicePixelRatio, 1.35);
@@ -51,6 +52,6 @@ export function prepararGraficos(renderer, scene, camera, fraco, qualidade='medi
     resize(w, h) { composer.setSize(w, h); bloomMetade(w, h); },
     escala(pr) { prAtual = Math.min(pr, 1.35); composer.setPixelRatio(prAtual); bloomMetade(innerWidth, innerHeight); }, // resolução dinâmica
     qualidade:definir,
-    velocidade(v){velocidade=Math.abs(v||0);movimento.enabled=perfil==='alta'&&velocidade>24;}
+    velocidade(v){velocidade=Math.abs(v||0);movimento.enabled=alto(perfil)&&velocidade>24;}
   };
 }

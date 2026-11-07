@@ -59,10 +59,14 @@ await Assets.carregarEssenciais(f => { $('cb').style.width = (15 + f * 20) + '%'
 let iniciarExtras;const extrasEmSegundoPlano=new Promise(r=>{iniciarExtras=()=>Assets.carregarExtras(null,mobile).then(r);}); // prédios e detalhes continuam baixando sem prender a entrada
 
 const memoria=navigator.deviceMemory||4;
+const qualidadeFixa=new URLSearchParams(location.search).has('fixo'); // testes/medições: não reduz a qualidade sozinho
 const fraco = mobile || (navigator.hardwareConcurrency || 4) <= 4 || memoria<=4; // celular/notebook básico recebe perfil leve
-const config=Object.assign({qualidade:fraco?'baixa':'media',sensibilidade:1,volume:.6},save.config||{});
+// Auto escolhe o perfil pelo aparelho; depois a qualidade adaptativa do loop ainda reduz se o FPS cair.
+const qualidadeAutomatica=()=>fraco?'baixa':((navigator.hardwareConcurrency||4)>=8&&memoria>=8&&devicePixelRatio<=2?'alta':'media');
+const config=Object.assign({qualidade:'auto',sensibilidade:1,volume:.6},save.config||{});
+if(config.qualidade==='auto'||config.qualidadeAuto){config.qualidadeAuto=true;config.qualidade=qualidadeAutomatica();}
 const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: !fraco });
-renderer.setPixelRatio(config.qualidade==='baixa'?1:config.qualidade==='media'?Math.min(devicePixelRatio,1.15):Math.min(devicePixelRatio,1.5)); renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(config.qualidade==='baixa'?1:config.qualidade==='media'?Math.min(devicePixelRatio,1.15):config.qualidade==='ultra'?Math.min(devicePixelRatio,2):Math.min(devicePixelRatio,1.5)); renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = config.qualidade!=='baixa'&&!fraco; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false; // atualizada a cada 2 quadros no loop (metade do custo de sombras)
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb); scene.fog = new THREE.Fog(0x87ceeb, 150, fraco ? 500 : 900);
@@ -86,6 +90,7 @@ jog2.obj.visible = false;
 FX.iniciar(scene);M.iniciar(scene,personagem.tipo,{dialogo:t=>Esc.abrir(t,[{t:'Continuar'}]),spawnAlvos:criarAlvosMissao,aviso:UI.notificar,procurado:n=>{estrelas=Math.max(estrelas,n);semCrime=0;}}); MG.iniciar(scene);
 const clima = criarClima(scene), sem = TR.criarSemaforos(scene), av = TR.criarAvioes(scene), transito = Array.from({ length: fraco ? 7 : 12 }, (_, i) => new TR.Transito(scene, i));
 const cullCidade = criarCullingInstancias(scene); // só desenha prédios/árvores/calçadas até a neblina
+sombraDoSol(config.qualidade);
 const policia=criarPolicia(scene);
 { // placa do organizador de mini-jogos
   const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#000a'; x.fillRect(0, 0, 256, 64); x.fillStyle = '#ffcc00'; x.font = 'bold 30px sans-serif'; x.textAlign = 'center'; x.fillText('MINI-JOGOS [G]', 128, 42);
@@ -282,10 +287,12 @@ function equiparArma(i) {
 Esc.configurar(aoAbrirTela);
 // Resolução dinâmica: se o aparelho não sustenta a taxa de quadros, a resolução cai em degraus pequenos
 // (e volta quando sobra folga) em vez de o jogo travar ou pular direto para a qualidade mínima.
-const prDaQualidade=q=>q==='baixa'?1:q==='media'?Math.min(devicePixelRatio,1.15):Math.min(devicePixelRatio,1.5);
+const prDaQualidade=q=>q==='baixa'?1:q==='media'?Math.min(devicePixelRatio,1.15):q==='ultra'?Math.min(devicePixelRatio,2):Math.min(devicePixelRatio,1.5);
 let prMax=prDaQualidade(config.qualidade),prAtual=prMax,msMedio=16,resT=0,resEspera=0,resNoMinimo=0,sombrasDesligadas=false;
 function definirResolucao(pr){prAtual=pr;renderer.setPixelRatio(pr);cinema?.escala(pr);}
-function aplicarQualidade(q,auto=false){config.qualidade=q;prMax=prDaQualidade(q);prAtual=prMax;renderer.setPixelRatio(prMax);if(!auto&&!fraco&&!sombrasDesligadas)renderer.shadowMap.enabled=q!=='baixa';clima.reduzir(q==='baixa'?300:q==='media'?520:750);cinema?.qualidade(q);cinema?.resize(innerWidth,innerHeight);cinema?.escala(prMax);gravar();}
+// Sombra do sol por perfil: Ultra usa mapa maior e cobre mais área; os demais mantêm o original.
+function sombraDoSol(q){scene.traverse(o=>{if(!o.isDirectionalLight||!o.castShadow)return;const ultra=q==='ultra',n=ultra?2048:1536,r=ultra?130:95;if(o.shadow.mapSize.x!==n){o.shadow.mapSize.set(n,n);o.shadow.map?.dispose();o.shadow.map=null;}Object.assign(o.shadow.camera,{left:-r,right:r,top:r,bottom:-r});o.shadow.camera.updateProjectionMatrix();});}
+function aplicarQualidade(q,auto=false){if(q==='auto'){config.qualidadeAuto=true;q=qualidadeAutomatica();}else if(!auto)config.qualidadeAuto=false;config.qualidade=q;sombraDoSol(q);prMax=prDaQualidade(q);prAtual=prMax;renderer.setPixelRatio(prMax);if(!auto&&!fraco&&!sombrasDesligadas)renderer.shadowMap.enabled=q!=='baixa';clima.reduzir(q==='baixa'?300:q==='media'?520:q==='ultra'?950:750);cinema?.qualidade(q);cinema?.resize(innerWidth,innerHeight);cinema?.escala(prMax);gravar();}
 Pause.iniciar(config,{aoAbrir:aoAbrirTela,qualidade:aplicarQualidade,volume:A.volume,salvar:gravar,conquistas:Conq.lista});
 function retirarDaGaragem(casaIdx,modelo){
   let c=frota.get(modelo);if(!c){c=new Carro(scene,INT.x-7,INT.z+INT.d/2-4.2,MODELOS[modelo],0);c.indiceModelo=modelo;frota.set(modelo,c);carros.push(c);}
@@ -610,7 +617,7 @@ function loop(agora) {
   if (!rodando) { A.motor(-1); A.sirene(false); return; }
   if(Pause.estaAberto()){A.motor(-1);A.sirene(false);return;}
   lento = bruto > 1 / 35 ? lento + Math.min(bruto, .1) : Math.max(0, lento - bruto); // FPS baixo sustentado mesmo após reduzir a resolução => qualidade mínima
-  if (lento > 2.2 && !reduzido) { const prAntes=prAtual;reduzido = true; aplicarQualidade('baixa',true);definirResolucao(Math.min(prAntes,.85));renderer.shadowMap.enabled=false; UI.notificar('Modo desempenho ativado para evitar travamentos.'); }
+  if (lento > 2.2 && !reduzido && !qualidadeFixa) { const prAntes=prAtual;reduzido = true; aplicarQualidade('baixa',true);definirResolucao(Math.min(prAntes,.85));renderer.shadowMap.enabled=false; UI.notificar('Modo desempenho ativado para evitar travamentos.'); }
   msMedio += (Math.min(bruto, .1) * 1000 - msMedio) * .04; resT += bruto; resEspera = Math.max(0, resEspera - bruto);
   if (resT > 1.5) {
     resT = 0;
