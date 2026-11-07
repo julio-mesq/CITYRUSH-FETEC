@@ -12,7 +12,7 @@ export function prepararGraficos(renderer, scene, camera, fraco, qualidade='medi
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   // Exposição mais baixa preserva céu, fachadas claras e faróis sem o aspecto
   // “estourado” que aparecia principalmente ao meio-dia.
-  renderer.toneMappingExposure = fraco ? .9 : .95; // com o sol mais forte (world.js) o meio-dia fica claro sem estourar
+  renderer.toneMappingExposure = fraco ? .86 : .9; // com o sol mais forte (world.js) o meio-dia fica claro sem estourar
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   // Uma iluminação ambiente neutra dá leitura melhor a lataria, vidro e metais

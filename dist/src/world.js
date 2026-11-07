@@ -85,7 +85,7 @@ export function criarMundo(scene, fraco, luzes) {
   criarSuperficiesUrbanas(scene,fraco);
 
   // Asfalto com granulação, dupla faixa amarela e limites refletivos.
-  const tv = texturaUrbana('#5b6266', 22); // asfalto cinza-escuro legível (antes quase preto: textura escura × cor escura) tv.repeat.set(1.4, 200);
+  const tv = texturaUrbana('#5b6266', 22); tv.repeat.set(1.4, 200); // asfalto cinza-escuro legível (antes quase preto: textura escura × cor escura)
   const th = tv.clone(); th.repeat.set(200, 1.4); th.needsUpdate = true;
   const asfV = new THREE.MeshStandardMaterial({ color: 0xd2d6d8, map: tv, roughness: .86, metalness: .035 });
   const asfH = new THREE.MeshStandardMaterial({ color: 0xd2d6d8, map: th, roughness: .86, metalness: .035 });
@@ -296,7 +296,7 @@ export function criarMundo(scene, fraco, luzes) {
     Object.assign(sol.shadow.camera, { left: -95, right: 95, top: 95, bottom: -95, near: 10, far: 900 }); // área menor = menos objetos redesenhados e sombra mais nítida
     sol.shadow.bias = -.0015; sol.shadow.normalBias = .02;
   }
-  const amb = new THREE.HemisphereLight(0x9fd3f0, 0x5a5047, .6); // chão devolve luz quente, como concreto ao sol scene.add(amb);
+  const amb = new THREE.HemisphereLight(0x9fd3f0, 0x5a5047, .6); scene.add(amb); // chão devolve luz quente, como concreto ao sol
   // Postes de rua: pontos entregues ao conjunto compartilhado de luzes (src/luzes.js), que acende só os mais próximos.
   if (!fraco && luzes) luzes.definirRua([[-109, -85], [91, -85], [-109, 115], [91, 115], [-209, 15], [191, 15], [-9, -185], [-9, 215]]);
   const dia = new THREE.Color(0x87ceeb), por = new THREE.Color(0xff8c00), noite = new THREE.Color(0x191970);
