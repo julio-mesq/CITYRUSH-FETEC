@@ -33,6 +33,8 @@
 "src/offline.js",
 "src/pause.js",
 "src/perf.js",
+"src/culling.js",
+"src/lod.js",
 "src/phone.js",
 "src/player.js",
 "src/police.js",

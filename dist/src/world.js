@@ -288,7 +288,7 @@ export function criarMundo(scene, fraco, luzes) {
   const nuvens = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 5), nuvemMat, fraco ? 24 : 72);
   const nm = new THREE.Matrix4(), nq = new THREE.Quaternion();
   for (let i = 0; i < nuvens.count; i++) nm.compose(new THREE.Vector3(R(-950, 950), R(115, 220), R(-950, 950)), nq, new THREE.Vector3(R(12, 30), R(2.5, 6), R(7, 18))), nuvens.setMatrixAt(i, nm);
-  nuvens.frustumCulled = false; scene.add(nuvens);
+  nuvens.frustumCulled = false; nuvens.userData.semCull = true; scene.add(nuvens);
   // Luz do sol + céu dinâmico (azul -> laranja -> roxo)
   const sol = new THREE.DirectionalLight(0xfff3e0, 1.5); scene.add(sol, sol.target);
   if (!fraco) { // sombras dinâmicas do sol (desligadas em dispositivos fracos)

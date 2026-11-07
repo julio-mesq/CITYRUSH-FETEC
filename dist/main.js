@@ -36,6 +36,8 @@ import * as Prog from './src/progression.js';
 import * as Conq from './src/achievements.js';
 import * as Pause from './src/pause.js';
 import { criarPainelDesempenho } from './src/perf.js';
+import { criarCullingInstancias } from './src/culling.js';
+const LIMITE_LOD = { baixa: 55, media: 85, alta: 130, ultra: 190 };
 iniciarLinkCelular((t)=>UI.notificar(t)); // botão LINK PARA CELULAR (UI é definido logo abaixo; só é usado ao clicar)
 // O cache offline começa depois da preparação do jogo, sem disputar a carga inicial.
 
@@ -83,6 +85,7 @@ const jog = new Jogador(scene, { cor: personagem.camisa, pele: personagem.pele, 
 jog2.obj.visible = false;
 FX.iniciar(scene);M.iniciar(scene,personagem.tipo,{dialogo:t=>Esc.abrir(t,[{t:'Continuar'}]),spawnAlvos:criarAlvosMissao,aviso:UI.notificar,procurado:n=>{estrelas=Math.max(estrelas,n);semCrime=0;}}); MG.iniciar(scene);
 const clima = criarClima(scene), sem = TR.criarSemaforos(scene), av = TR.criarAvioes(scene), transito = Array.from({ length: fraco ? 7 : 12 }, (_, i) => new TR.Transito(scene, i));
+const cullCidade = criarCullingInstancias(scene); // só desenha prédios/árvores/calçadas até a neblina
 const policia=criarPolicia(scene);
 { // placa do organizador de mini-jogos
   const c = document.createElement('canvas'); c.width = 256; c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#000a'; x.fillRect(0, 0, 256, 64); x.fillStyle = '#ffcc00'; x.font = 'bold 30px sans-serif'; x.textAlign = 'center'; x.fillText('MINI-JOGOS [G]', 128, 42);
@@ -595,7 +598,7 @@ try{
 await passo(100, 'Pronto!');await esperarCarrossel(); $('carga').classList.add('off');
 iniciarOffline();iniciarExtras();
 const painelPerf=criarPainelDesempenho(renderer,{texto:()=>`qualidade ${config.qualidade} · resolução ${Math.round(prAtual*100)}%`});
-if(new URLSearchParams(location.search).has('perf'))window.__CR={renderer,scene,cam,jog,carros,npcs,transito,painelPerf,teclas,config};
+if(new URLSearchParams(location.search).has('perf'))window.__CR={renderer,scene,cam,jog,carros,npcs,transito,painelPerf,teclas,config,cullCidade};
 let atividadeOffline=null;
 let ultimo = performance.now(), quadroSombra = 0;
 function loop(agora) {
@@ -631,6 +634,7 @@ function loop(agora) {
   carros.forEach(c=>{if(c!==jog.veiculo&&(!INT.on||c===ultimoVeiculo))c.atualizar(dt,false);});
   const escuro = Math.sin(tempoDia * Math.PI * 2) < .12;
   carros.forEach(c => c.definirFarol(c === jog.veiculo && (c.farolManual??escuro))); atualizarPainel(jog.veiculo);
+  { let criou = false; const lim = LIMITE_LOD[config.qualidade] || 85; for (const c of carros) { const d = c === jog.veiculo ? 0 : cam.position.distanceTo(c.obj.position); const antes = c.lod; c.atualizarLod(d, lim, !criou); if (c.lod !== antes) criou = true; } } // 1 impostor novo por quadro, no máximo
   mobileUI.atualizar();
   const miraAtiva = jog.mira && !jog.veiculo && !jog.morto && arma < 6;
   document.body.classList.toggle('aiming', miraAtiva);
@@ -718,6 +722,7 @@ function loop(agora) {
   atualizarArmaTerceiraPessoa(jog.obj,(jog.mira||teclas.Mouse0)&&!jog.veiculo,!!jog.veiculo||!!transicaoVeiculo||pov===1||jog.morto);
   fp.visible = pov === 1 && !jog.veiculo && !jog.morto && arma < 6;
   atualizarCamera(cam, agora, dt, jog, pov, jog.mira && !jog.veiculo ? (arma === 4 ? 18 : 42) : 0); ceu(tempoDia, alvo);
+  cam.updateMatrixWorld(); cullCidade.atualizar(split ? [cam, cam2] : [cam], Math.ceil(scene.fog.far / 25) * 25 + 15);
   luzes.atualizar(dt, jog.obj.position, INT.on);
   { // farol e neon: uma luz fixa de cada, apenas movida/intensificada (sem recompilar shaders)
     const cf = jog.veiculo;

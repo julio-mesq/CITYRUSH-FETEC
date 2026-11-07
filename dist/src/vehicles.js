@@ -9,6 +9,7 @@ import { colide } from './world.js';
 import * as Assets from './assets.js';
 import { passoDrift } from './mechanics.js';
 import { prepararDinamica, atualizarDinamica } from './vehicle-dynamics.js';
+import { criarImpostor, alternarLod, descartarImpostor } from './lod.js';
 
 export const MODELOS = [
   { marca: 'City', nome: 'Hatch Compacto', cor: 0xd9d9d9, w: 1.7, h: 1.4, l: 3.9, cab: .55, vmax: 30, acel: 12, preco: 9000, glb: 'carroCompacto' },
@@ -201,8 +202,18 @@ export class Carro {
     if(this.m.interiorReal){this.exterior.visible=true;this.cabine.visible=false;return;}
     this.exterior.visible = !on; if(this.porta)this.porta.visible=!on; this.cabine.visible = on; this.aerofolio.visible = !on && this.tuning.aerofolio > 0;
   }
+  /** LOD: de longe o carro vira 1 malha mesclada (1 draw call em vez de ~14). Retorna true se o impostor está ativo. */
+  atualizarLod(distancia, limite, podeCriar) {
+    if (!this.lod && distancia > limite && podeCriar && this.exterior?.visible && this.obj.visible) {
+      this.lodIgnorar = [this.encaixeCondutor, this.farois, this.cabine, this.neon].filter(Boolean);
+      this.lod = criarImpostor(this.obj, this.lodIgnorar);
+      if (this.lod) { this.obj.add(this.lod); this.lodCriado = true; }
+    }
+    return alternarLod(this, distancia, limite);
+  }
   aplicarCustomizacao(cfg = {}) {
     Object.assign(this.tuning, cfg);
+    descartarImpostor(this);
     const cor = new THREE.Color(this.tuning.pintura ?? this.m.cor);
     this.partesPintura.forEach(mat => { mat.color.copy(cor); mat.needsUpdate = true; });
     const corRoda = [0xaeb6bd, 0x15191d, 0xb46b24][this.tuning.rodas] || 0xaeb6bd;
